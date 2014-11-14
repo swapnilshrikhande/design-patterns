@@ -17,8 +17,7 @@ static{
   for(String name : strategyNames){
     try{
     
-      strategies.put(name
-      ,(PaymentService)Type.forName(name+'impl').newInstance());
+      strategies.put(name,(PaymentService)Type.forName(name+'Implementation').newInstance());
     
     }catch(Exception e){
        continue;
@@ -26,14 +25,14 @@ static{
   }
 }
 
-private PaymentService strategy;
+ private PaymentService strategy;
 
-public Geocoder(String s){
-  if(!strategies.containsKey(s)) throw new NameException(s + ' not found');
-  strategy = strategies.get(s);
-}
+  public PaymentProcessor(String processorType){
+    if(!strategies.containsKey(processorType)) throw new NameException();
+    strategy = strategies.get(processorType);
+  }
 
-  public List<Double> getLatLong(String address){
-    return strategy.getLatLong(address);
+  public TransactionResult processPayment(TransactionDetail transactionDetails){
+    return strategies.processPayment(transactionDetails);
   }
 }
