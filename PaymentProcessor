@@ -1,0 +1,39 @@
+public class PaymentProcessor {
+
+public class NameException extends Exception{}
+
+public static final Map<String,PaymentService> strategies;
+
+static{
+
+  SupportedPayProcessors__c payProcessorList = SupportedPayProcessors__c.getall().values();
+  
+  List<String> strategyNames = new List<String>();
+  Loop payProcessorList in payProcessor
+    Add strategyNames.add(payProcessor.Name)
+  
+  strategies = new Map<String,PaymentService>();
+  
+  for(String name : strategyNames){
+    try{
+    
+      strategies.put(name
+      ,(PaymentService)Type.forName(name+'impl').newInstance());
+    
+    }catch(Exception e){
+       continue;
+    } //skip bad config silently
+  }
+}
+
+private PaymentService strategy;
+
+public Geocoder(String s){
+  if(!strategies.containsKey(s)) throw new NameException(s + ' not found');
+  strategy = strategies.get(s);
+}
+
+  public List<Double> getLatLong(String address){
+    return strategy.getLatLong(address);
+  }
+}
